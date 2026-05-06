@@ -19,9 +19,12 @@ const CITIES = [
   "Уфа", "Ростов-на-Дону", "Краснодар", "Пермь",
 ]
 
-const BASE_PRICE_PER_KM = 45
-const WEIGHT_RATE = 12
-const VOLUME_RATE = 8
+const TRANSPORT_TYPES = [
+  { id: "truck",   label: "Фура",    emoji: "🚛", pricePerKm: 45,  weightRate: 12, volumeRate: 8  },
+  { id: "barge",   label: "Баржа",   emoji: "🚢", pricePerKm: 18,  weightRate: 5,  volumeRate: 3  },
+  { id: "railway", label: "ЖД",      emoji: "🚂", pricePerKm: 28,  weightRate: 8,  volumeRate: 5  },
+  { id: "air",     label: "Авиа",    emoji: "✈️", pricePerKm: 180, weightRate: 60, volumeRate: 40 },
+]
 
 const CITY_DISTANCES: Record<string, Record<string, number>> = {
   "Москва": { "Санкт-Петербург": 710, "Новосибирск": 3350, "Екатеринбург": 1790, "Казань": 820, "Нижний Новгород": 410, "Челябинск": 1910, "Самара": 1060, "Уфа": 1340, "Ростов-на-Дону": 1080, "Краснодар": 1360, "Пермь": 1480 },
@@ -43,12 +46,13 @@ function getDistance(from: string, to: string): number {
   return CITY_DISTANCES[from]?.[to] ?? CITY_DISTANCES[to]?.[from] ?? 500
 }
 
-function calcPrice(from: string, to: string, weight: number, volume: number): number {
+function calcPrice(from: string, to: string, weight: number, volume: number, transportId: string): number {
   const km = getDistance(from, to)
   if (km === 0) return 0
-  const base = km * BASE_PRICE_PER_KM
-  const weightCost = weight * WEIGHT_RATE * Math.ceil(km / 100)
-  const volumeCost = volume * VOLUME_RATE * Math.ceil(km / 100)
+  const t = TRANSPORT_TYPES.find(t => t.id === transportId) ?? TRANSPORT_TYPES[0]
+  const base = km * t.pricePerKm
+  const weightCost = weight * t.weightRate * Math.ceil(km / 100)
+  const volumeCost = volume * t.volumeRate * Math.ceil(km / 100)
   return Math.round(base + weightCost + volumeCost)
 }
 
@@ -139,27 +143,19 @@ const Scene = () => {
   )
 }
 
-const TRUCK_OPTIONS = [
-  { value: 1, label: "1 фура" },
-  { value: 2, label: "2 фуры" },
-  { value: 3, label: "3 фуры" },
-  { value: 4, label: "4 фуры" },
-  { value: 5, label: "5 фур" },
-]
-
 function PriceCalculator() {
   const [from, setFrom] = useState("Москва")
   const [to, setTo] = useState("Санкт-Петербург")
   const [weight, setWeight] = useState(500)
   const [volume, setVolume] = useState(5)
-  const [trucks, setTrucks] = useState(1)
+  const [transport, setTransport] = useState("truck")
   const [calculated, setCalculated] = useState(false)
   const [price, setPrice] = useState(0)
 
   const toOptions = CITIES.filter(c => c !== from)
 
   const handleCalculate = () => {
-    const result = calcPrice(from, to, weight, volume) * trucks
+    const result = calcPrice(from, to, weight, volume, transport)
     setPrice(result)
     setCalculated(true)
   }
@@ -169,6 +165,8 @@ function PriceCalculator() {
     if (to === val) setTo(CITIES.find(c => c !== val) || "Санкт-Петербург")
     setCalculated(false)
   }
+
+  const selectedTransport = TRANSPORT_TYPES.find(t => t.id === transport)!
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-black/70 backdrop-blur-md border border-red-500/30 rounded-2xl p-6 mt-8">
@@ -231,7 +229,7 @@ function PriceCalculator() {
             <input
               type="range"
               min={1}
-              max={80}
+              max={1000}
               step={1}
               value={volume}
               onChange={e => { setVolume(Number(e.target.value)); setCalculated(false) }}
@@ -239,29 +237,37 @@ function PriceCalculator() {
             />
           </div>
           <div className="flex justify-between text-gray-500 text-xs font-space-mono mt-1">
-            <span>1 м³</span><span>80 м³</span>
+            <span>1 м³</span><span>1 000 м³</span>
           </div>
         </div>
 
         <div className="sm:col-span-2">
           <label className="block text-red-400 text-xs font-space-mono mb-2 uppercase tracking-wider">
-            Количество фур
+            Тип транспорта
           </label>
           <div className="flex gap-2 flex-wrap">
-            {TRUCK_OPTIONS.map(opt => (
-              <button
-                key={opt.value}
-                onClick={() => { setTrucks(opt.value); setCalculated(false) }}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-space-mono border transition-all cursor-pointer ${
-                  trucks === opt.value
-                    ? "bg-red-500 border-red-500 text-white"
-                    : "bg-black/60 border-red-500/30 text-gray-300 hover:border-red-500/60"
-                }`}
-              >
-                <Icon name="Truck" size={14} />
-                {opt.label}
-              </button>
-            ))}
+            {TRANSPORT_TYPES.map(t => {
+              const isSelected = transport === t.id
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => { setTransport(t.id); setCalculated(false) }}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-space-mono border transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-red-500 border-red-500 text-white"
+                      : "bg-black/60 border-red-500/30 text-gray-300 hover:border-red-500/60"
+                  }`}
+                >
+                  <span className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+                    isSelected ? "border-white bg-white" : "border-gray-500"
+                  }`}>
+                    {isSelected && <span className="text-red-500 text-xs font-bold leading-none">✓</span>}
+                  </span>
+                  <span>{t.emoji}</span>
+                  <span>{t.label}</span>
+                </button>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -281,7 +287,7 @@ function PriceCalculator() {
               {price.toLocaleString("ru-RU")} ₽
             </div>
             <div className="text-gray-400 text-xs font-space-mono">
-              ~{getDistance(from, to)} км · {trucks} {trucks === 1 ? "фура" : trucks < 5 ? "фуры" : "фур"}
+              ~{getDistance(from, to)} км · {selectedTransport.emoji} {selectedTransport.label}
             </div>
           </div>
         )}
