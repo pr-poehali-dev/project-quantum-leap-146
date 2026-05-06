@@ -3,40 +3,40 @@ import { Badge } from "@/components/ui/badge"
 
 const features = [
   {
-    title: "Адаптивная нейрообработка",
-    description: "Самооптимизирующиеся алгоритмы, которые обучаются на нейронных паттернах и улучшают интерпретацию сигналов.",
-    icon: "brain",
-    badge: "ИИ",
-  },
-  {
-    title: "Медицинская защита",
-    description: "Шифрование по стандартам FDA со сквозной защитой конфиденциальных нейронных данных.",
-    icon: "lock",
-    badge: "Сертификат",
-  },
-  {
-    title: "Интуитивное управление",
-    description: "Естественная трансляция мыслей в действия с откликом менее миллисекунды и точностью 99,7%.",
-    icon: "globe",
-    badge: "Точность",
-  },
-  {
-    title: "Предиктивная калибровка",
-    description: "ML-модели, которые предугадывают намерения пользователя и оптимизируют нейронные пути.",
+    title: "Мгновенный расчёт стоимости",
+    description: "Укажите адрес откуда и куда, тип груза — и получите точную цену за секунды. Никакого ожидания и созвонов.",
     icon: "zap",
-    badge: "Умный",
+    badge: "Быстро",
   },
   {
-    title: "Биометрическая интеграция",
-    description: "Бесшовная синхронизация с мониторингом жизненных показателей для контроля здоровья.",
-    icon: "link",
-    badge: "Связь",
+    title: "Автомобили любого класса",
+    description: "Газели, фургоны, грузовики до 20 тонн. Выбирайте нужный тоннаж — подберём оптимальный вариант.",
+    icon: "truck",
+    badge: "Выбор",
   },
   {
-    title: "Поддержка XR",
-    description: "Нативная совместимость с AR/VR-средами для терапевтических и рабочих приложений.",
-    icon: "target",
-    badge: "XR Ready",
+    title: "Профессиональные грузчики",
+    description: "Опытные грузчики с аккуратным обращением. Добавьте к заказу нужное количество — от 1 до 6 человек.",
+    icon: "users",
+    badge: "Надёжно",
+  },
+  {
+    title: "Отслеживание в реальном времени",
+    description: "Знайте, где находится ваш груз в каждый момент. GPS-трекинг и уведомления на каждом этапе.",
+    icon: "map",
+    badge: "GPS",
+  },
+  {
+    title: "Страхование груза",
+    description: "Каждая перевозка застрахована. Ваши вещи под защитой от момента погрузки до сдачи на точку.",
+    icon: "shield",
+    badge: "Защита",
+  },
+  {
+    title: "Заказ в 3 клика",
+    description: "Простая форма заказа без регистрации. Подтверждение — в течение 5 минут. Оплата онлайн или наличными.",
+    icon: "check",
+    badge: "Просто",
   },
 ]
 
@@ -45,9 +45,9 @@ export function FeaturesSection() {
     <section className="py-24 px-6 bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4 font-sans">Возможности нового поколения</h2>
+          <h2 className="text-4xl font-bold text-foreground mb-4 font-sans">Всё для вашей перевозки</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Почувствуйте будущее с технологиями, которые переопределяют возможное
+            Никаких посредников и скрытых доплат — только честная цена и надёжный сервис
           </p>
         </div>
 
@@ -61,12 +61,12 @@ export function FeaturesSection() {
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-3xl">
-                    {feature.icon === "brain" && "&#129504;"}
-                    {feature.icon === "lock" && "&#128274;"}
-                    {feature.icon === "globe" && "&#127760;"}
-                    {feature.icon === "zap" && "&#9889;"}
-                    {feature.icon === "link" && "&#128279;"}
-                    {feature.icon === "target" && "&#127919;"}
+                    {feature.icon === "zap" && "⚡"}
+                    {feature.icon === "truck" && "🚛"}
+                    {feature.icon === "users" && "👷"}
+                    {feature.icon === "map" && "📍"}
+                    {feature.icon === "shield" && "🛡️"}
+                    {feature.icon === "check" && "✅"}
                   </span>
                   <Badge variant="secondary" className="bg-accent text-accent-foreground">
                     {feature.badge}
