@@ -139,18 +139,27 @@ const Scene = () => {
   )
 }
 
+const TRUCK_OPTIONS = [
+  { value: 1, label: "1 фура" },
+  { value: 2, label: "2 фуры" },
+  { value: 3, label: "3 фуры" },
+  { value: 4, label: "4 фуры" },
+  { value: 5, label: "5 фур" },
+]
+
 function PriceCalculator() {
   const [from, setFrom] = useState("Москва")
   const [to, setTo] = useState("Санкт-Петербург")
   const [weight, setWeight] = useState(500)
   const [volume, setVolume] = useState(5)
+  const [trucks, setTrucks] = useState(1)
   const [calculated, setCalculated] = useState(false)
   const [price, setPrice] = useState(0)
 
   const toOptions = CITIES.filter(c => c !== from)
 
   const handleCalculate = () => {
-    const result = calcPrice(from, to, weight, volume)
+    const result = calcPrice(from, to, weight, volume) * trucks
     setPrice(result)
     setCalculated(true)
   }
@@ -194,22 +203,22 @@ function PriceCalculator() {
 
         <div>
           <label className="block text-red-400 text-xs font-space-mono mb-1 uppercase tracking-wider">
-            Вес груза: <span className="text-white">{weight} кг</span>
+            Вес груза: <span className="text-white">{weight.toLocaleString("ru-RU")} кг</span>
           </label>
           <div className="flex items-center gap-3">
             <Icon name="Weight" size={16} className="text-red-500 shrink-0" />
             <input
               type="range"
               min={50}
-              max={100000}
-              step={100}
+              max={10000}
+              step={50}
               value={weight}
               onChange={e => { setWeight(Number(e.target.value)); setCalculated(false) }}
               className="w-full accent-red-500 cursor-pointer"
             />
           </div>
           <div className="flex justify-between text-gray-500 text-xs font-space-mono mt-1">
-            <span>50 кг</span><span>100 000 кг</span>
+            <span>50 кг</span><span>10 000 кг</span>
           </div>
         </div>
 
@@ -233,6 +242,28 @@ function PriceCalculator() {
             <span>1 м³</span><span>80 м³</span>
           </div>
         </div>
+
+        <div className="sm:col-span-2">
+          <label className="block text-red-400 text-xs font-space-mono mb-2 uppercase tracking-wider">
+            Количество фур
+          </label>
+          <div className="flex gap-2 flex-wrap">
+            {TRUCK_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => { setTrucks(opt.value); setCalculated(false) }}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-space-mono border transition-all cursor-pointer ${
+                  trucks === opt.value
+                    ? "bg-red-500 border-red-500 text-white"
+                    : "bg-black/60 border-red-500/30 text-gray-300 hover:border-red-500/60"
+                }`}
+              >
+                <Icon name="Truck" size={14} />
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -250,7 +281,7 @@ function PriceCalculator() {
               {price.toLocaleString("ru-RU")} ₽
             </div>
             <div className="text-gray-400 text-xs font-space-mono">
-              ~{getDistance(from, to)} км
+              ~{getDistance(from, to)} км · {trucks} {trucks === 1 ? "фура" : trucks < 5 ? "фуры" : "фур"}
             </div>
           </div>
         )}
