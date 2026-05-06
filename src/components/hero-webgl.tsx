@@ -201,15 +201,15 @@ function PriceCalculator() {
             <input
               type="range"
               min={50}
-              max={10000}
-              step={50}
+              max={100000}
+              step={100}
               value={weight}
               onChange={e => { setWeight(Number(e.target.value)); setCalculated(false) }}
               className="w-full accent-red-500 cursor-pointer"
             />
           </div>
           <div className="flex justify-between text-gray-500 text-xs font-space-mono mt-1">
-            <span>50 кг</span><span>10 000 кг</span>
+            <span>50 кг</span><span>100 000 кг</span>
           </div>
         </div>
 
