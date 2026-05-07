@@ -255,36 +255,36 @@ function PriceCalculator() {
             <input
               type="range"
               min={50}
-              max={10000}
-              step={50}
+              max={100000}
+              step={100}
               value={weight}
               onChange={e => { setWeight(Number(e.target.value)); setCalculated(false) }}
               className="w-full accent-red-500 cursor-pointer"
             />
           </div>
           <div className="flex justify-between text-gray-500 text-xs font-space-mono mt-1">
-            <span>50 кг</span><span>10 000 кг</span>
+            <span>50 кг</span><span>100 000 кг</span>
           </div>
         </div>
 
         <div>
           <label className="block text-red-400 text-xs font-space-mono mb-1 uppercase tracking-wider">
-            Объём: <span className="text-white">{volume} м³</span>
+            Объём: <span className="text-white">{volume.toLocaleString("ru-RU")} м³</span>
           </label>
           <div className="flex items-center gap-3">
             <Icon name="Package" size={16} className="text-red-500 shrink-0" />
             <input
               type="range"
               min={1}
-              max={1000}
-              step={1}
+              max={10000}
+              step={10}
               value={volume}
               onChange={e => { setVolume(Number(e.target.value)); setCalculated(false) }}
               className="w-full accent-red-500 cursor-pointer"
             />
           </div>
           <div className="flex justify-between text-gray-500 text-xs font-space-mono mt-1">
-            <span>1 м³</span><span>1 000 м³</span>
+            <span>1 м³</span><span>10 000 м³</span>
           </div>
         </div>
 
