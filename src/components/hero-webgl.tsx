@@ -216,7 +216,7 @@ function PriceCalculator() {
   const totalPrice = price + extrasPrice
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-black/70 backdrop-blur-md border border-red-500/30 rounded-2xl p-6 mt-8">
+    <div className="w-full max-w-2xl mx-auto bg-black/70 backdrop-blur-md border border-red-500/30 rounded-2xl p-6 mt-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div>
           <label className="block text-red-400 text-xs font-space-mono mb-1 uppercase tracking-wider">Откуда</label>
