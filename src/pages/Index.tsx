@@ -7,13 +7,11 @@ import { SafetySection } from "@/components/safety-section"
 import { TestimonialsSection } from "@/components/testimonials-section"
 import { FAQSection } from "@/components/faq-section"
 import { CTASection } from "@/components/cta-section"
-import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 
 export default function Index() {
   return (
     <div className="dark">
-      <Navbar />
       <main>
         <Hero3D />
         <FeaturesSection />
