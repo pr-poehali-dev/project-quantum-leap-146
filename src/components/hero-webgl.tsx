@@ -26,6 +26,13 @@ const TRANSPORT_TYPES = [
   { id: "air",     label: "Авиа",    emoji: "✈️", pricePerKm: 180, weightRate: 60, volumeRate: 40 },
 ]
 
+const EXTRA_SERVICES = [
+  { id: "loaders",   label: "Грузчики",             emoji: "💪", price: 3500,  unit: "чел/день" },
+  { id: "gazelle",   label: "Газель",                emoji: "🚐", price: 4500,  unit: "смена"    },
+  { id: "logist",    label: "Логист по точкам",      emoji: "🗺️", price: 8000,  unit: "день"     },
+  { id: "packaging", label: "Упаковка / обрешётка",  emoji: "📦", price: 2500,  unit: "место"    },
+]
+
 const CITY_DISTANCES: Record<string, Record<string, number>> = {
   "Москва": { "Санкт-Петербург": 710, "Новосибирск": 3350, "Екатеринбург": 1790, "Казань": 820, "Нижний Новгород": 410, "Челябинск": 1910, "Самара": 1060, "Уфа": 1340, "Ростов-на-Дону": 1080, "Краснодар": 1360, "Пермь": 1480 },
   "Санкт-Петербург": { "Москва": 710, "Новосибирск": 3810, "Екатеринбург": 2390, "Казань": 1530, "Нижний Новгород": 1120, "Челябинск": 2560, "Самара": 1770, "Уфа": 2040, "Ростов-на-Дону": 1790, "Краснодар": 2080, "Пермь": 2060 },
@@ -143,20 +150,59 @@ const Scene = () => {
   )
 }
 
+function CheckButton({ selected, onClick, emoji, label, sublabel }: {
+  selected: boolean; onClick: () => void; emoji: string; label: string; sublabel?: string
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-space-mono border transition-all cursor-pointer ${
+        selected
+          ? "bg-red-500 border-red-500 text-white"
+          : "bg-black/60 border-red-500/30 text-gray-300 hover:border-red-500/60"
+      }`}
+    >
+      <span className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+        selected ? "border-white bg-white" : "border-gray-500"
+      }`}>
+        {selected && <span className="text-red-500 text-[10px] font-bold leading-none">✓</span>}
+      </span>
+      <span>{emoji}</span>
+      <span>{label}</span>
+      {sublabel && <span className={`text-xs ${selected ? "text-red-100" : "text-gray-500"}`}>{sublabel}</span>}
+    </button>
+  )
+}
+
 function PriceCalculator() {
   const [from, setFrom] = useState("Москва")
   const [to, setTo] = useState("Санкт-Петербург")
   const [weight, setWeight] = useState(500)
   const [volume, setVolume] = useState(5)
   const [transport, setTransport] = useState("truck")
+  const [extras, setExtras] = useState<Set<string>>(new Set())
   const [calculated, setCalculated] = useState(false)
   const [price, setPrice] = useState(0)
+  const [extrasPrice, setExtrasPrice] = useState(0)
 
   const toOptions = CITIES.filter(c => c !== from)
 
+  const toggleExtra = (id: string) => {
+    setExtras(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) { next.delete(id) } else { next.add(id) }
+      return next
+    })
+    setCalculated(false)
+  }
+
   const handleCalculate = () => {
-    const result = calcPrice(from, to, weight, volume, transport)
-    setPrice(result)
+    const base = calcPrice(from, to, weight, volume, transport)
+    const extraTotal = EXTRA_SERVICES
+      .filter(s => extras.has(s.id))
+      .reduce((sum, s) => sum + s.price, 0)
+    setPrice(base)
+    setExtrasPrice(extraTotal)
     setCalculated(true)
   }
 
@@ -167,6 +213,7 @@ function PriceCalculator() {
   }
 
   const selectedTransport = TRANSPORT_TYPES.find(t => t.id === transport)!
+  const totalPrice = price + extrasPrice
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-black/70 backdrop-blur-md border border-red-500/30 rounded-2xl p-6 mt-8">
@@ -246,28 +293,33 @@ function PriceCalculator() {
             Тип транспорта
           </label>
           <div className="flex gap-2 flex-wrap">
-            {TRANSPORT_TYPES.map(t => {
-              const isSelected = transport === t.id
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => { setTransport(t.id); setCalculated(false) }}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-space-mono border transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-red-500 border-red-500 text-white"
-                      : "bg-black/60 border-red-500/30 text-gray-300 hover:border-red-500/60"
-                  }`}
-                >
-                  <span className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
-                    isSelected ? "border-white bg-white" : "border-gray-500"
-                  }`}>
-                    {isSelected && <span className="text-red-500 text-xs font-bold leading-none">✓</span>}
-                  </span>
-                  <span>{t.emoji}</span>
-                  <span>{t.label}</span>
-                </button>
-              )
-            })}
+            {TRANSPORT_TYPES.map(t => (
+              <CheckButton
+                key={t.id}
+                selected={transport === t.id}
+                onClick={() => { setTransport(t.id); setCalculated(false) }}
+                emoji={t.emoji}
+                label={t.label}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className="block text-red-400 text-xs font-space-mono mb-2 uppercase tracking-wider">
+            Дополнительные услуги
+          </label>
+          <div className="flex gap-2 flex-wrap">
+            {EXTRA_SERVICES.map(s => (
+              <CheckButton
+                key={s.id}
+                selected={extras.has(s.id)}
+                onClick={() => toggleExtra(s.id)}
+                emoji={s.emoji}
+                label={s.label}
+                sublabel={`+${s.price.toLocaleString("ru-RU")} ₽/${s.unit}`}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -281,14 +333,21 @@ function PriceCalculator() {
         </Button>
 
         {calculated && (
-          <div className="flex items-center gap-3 animate-in fade-in duration-300">
-            <div className="text-gray-400 text-sm font-space-mono">от</div>
-            <div className="text-2xl font-bold text-white font-orbitron">
-              {price.toLocaleString("ru-RU")} ₽
+          <div className="flex flex-col gap-0.5 animate-in fade-in duration-300">
+            <div className="flex items-center gap-3">
+              <div className="text-gray-400 text-sm font-space-mono">от</div>
+              <div className="text-2xl font-bold text-white font-orbitron">
+                {totalPrice.toLocaleString("ru-RU")} ₽
+              </div>
+              <div className="text-gray-400 text-xs font-space-mono">
+                ~{getDistance(from, to)} км · {selectedTransport.emoji} {selectedTransport.label}
+              </div>
             </div>
-            <div className="text-gray-400 text-xs font-space-mono">
-              ~{getDistance(from, to)} км · {selectedTransport.emoji} {selectedTransport.label}
-            </div>
+            {extrasPrice > 0 && (
+              <div className="text-gray-500 text-xs font-space-mono pl-8">
+                доставка {price.toLocaleString("ru-RU")} ₽ + услуги {extrasPrice.toLocaleString("ru-RU")} ₽
+              </div>
+            )}
           </div>
         )}
       </div>
