@@ -356,8 +356,8 @@ function PriceCalculator() {
 }
 
 export const Hero3DWebGL = () => {
-  const titleWords = "Груз Экспресс".split(" ")
-  const subtitle = "Расчёт стоимости и заказ авто с грузчиками — за 2 минуты."
+  const titleWords = "Ваш Логист".split(" ")
+  const subtitle = "Расчёт стоимости и заказ авто с грузчиками — за 5 минут."
   const [visibleWords, setVisibleWords] = useState(0)
   const [subtitleVisible, setSubtitleVisible] = useState(false)
   const [calcVisible, setCalcVisible] = useState(false)
@@ -396,7 +396,7 @@ export const Hero3DWebGL = () => {
       </div>
 
       <div className="min-h-screen uppercase items-center w-full absolute z-[60] px-6 flex justify-center flex-col pt-20 pb-16">
-        <div className="text-3xl md:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold font-orbitron">
+        <div className="text-2xl md:text-4xl xl:text-5xl 2xl:text-6xl font-extrabold font-orbitron">
           <div className="flex space-x-2 lg:space-x-6 overflow-hidden text-white">
             {titleWords.map((word, index) => (
               <div
@@ -413,7 +413,7 @@ export const Hero3DWebGL = () => {
           </div>
         </div>
 
-        <div className="text-xs md:text-xl xl:text-2xl 2xl:text-3xl mt-2 overflow-hidden text-white font-bold max-w-4xl mx-auto text-center px-4 normal-case">
+        <div className="text-xs md:text-lg xl:text-xl 2xl:text-2xl mt-2 overflow-hidden text-white font-bold max-w-4xl mx-auto text-center px-4 normal-case">
           <div
             className={subtitleVisible ? "fade-in-subtitle" : ""}
             style={{
