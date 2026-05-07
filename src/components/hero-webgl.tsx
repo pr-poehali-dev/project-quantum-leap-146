@@ -31,7 +31,7 @@ const EXTRA_SERVICES = [
   { id: "loaders",   label: "Грузчики",             emoji: "💪", price: 3500,  unit: "чел/день" },
   { id: "gazelle",   label: "Газель",                emoji: "🚐", price: 4500,  unit: "смена"    },
   { id: "logist",    label: "Логист по точкам",      emoji: "🗺️", price: 8000,  unit: "день"     },
-  { id: "packaging", label: "Упаковка / обрешётка",  emoji: "📦", price: 2500,  unit: "место"    },
+  { id: "packaging", label: "Упаковка / обрешётка",  emoji: "📦", price: 2500,  unit: "место",  groupWith: "logist" },
 ]
 
 const CITY_DISTANCES: Record<string, Record<string, number>> = {
@@ -311,16 +311,29 @@ function PriceCalculator() {
             Дополнительные услуги
           </label>
           <div className="flex gap-2 flex-wrap">
-            {EXTRA_SERVICES.map(s => (
-              <CheckButton
-                key={s.id}
-                selected={extras.has(s.id)}
-                onClick={() => toggleExtra(s.id)}
-                emoji={s.emoji}
-                label={s.label}
-                sublabel={`+${s.price.toLocaleString("ru-RU")} ₽/${s.unit}`}
-              />
-            ))}
+            {EXTRA_SERVICES.filter(s => !s.groupWith).map(s => {
+              const paired = EXTRA_SERVICES.find(x => x.groupWith === s.id)
+              return (
+                <div key={s.id} className="flex gap-2">
+                  <CheckButton
+                    selected={extras.has(s.id)}
+                    onClick={() => toggleExtra(s.id)}
+                    emoji={s.emoji}
+                    label={s.label}
+                    sublabel={`+${s.price.toLocaleString("ru-RU")} ₽/${s.unit}`}
+                  />
+                  {paired && (
+                    <CheckButton
+                      selected={extras.has(paired.id)}
+                      onClick={() => toggleExtra(paired.id)}
+                      emoji={paired.emoji}
+                      label={paired.label}
+                      sublabel={`+${paired.price.toLocaleString("ru-RU")} ₽/${paired.unit}`}
+                    />
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>
