@@ -20,6 +20,7 @@ const CITIES = [
 ]
 
 const TRANSPORT_TYPES = [
+  { id: "gazelle", label: "Газель",  emoji: "🚐", pricePerKm: 22,  weightRate: 6,  volumeRate: 4  },
   { id: "truck",   label: "Фура",    emoji: "🚛", pricePerKm: 45,  weightRate: 12, volumeRate: 8  },
   { id: "barge",   label: "Баржа",   emoji: "🚢", pricePerKm: 18,  weightRate: 5,  volumeRate: 3  },
   { id: "railway", label: "ЖД",      emoji: "🚂", pricePerKm: 28,  weightRate: 8,  volumeRate: 5  },
